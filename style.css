@@ -3,3 +3,35 @@
     padding: 0;
     box-sizing: border-box;
 }
+
+:root {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.board-container {
+    display: grid;
+    grid: repeat(3, 1fr) / repeat(3, 1fr);
+    gap: 1px;
+    width: 302px;
+    height: 302px;
+    background-color: lightgrey;
+}
+
+.board-container div {
+    width: 100px;
+    height: 100px;
+    display: grid;
+    justify-items: center;
+    align-items: center;
+    background-color: white;
+    font-size: 20px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.board-container div:hover {
+    background-color: rgb(252, 252, 252);
+}
+.board-container div:active {
+    background-color: rgb(237, 247, 246);
+}
