@@ -1,18 +1,32 @@
 const gameBoard = (function () {
     const _board = [
-        ['O', 'X', 'O'],
+        ['O', '', 'O'],
         ['X', 'O', 'O'],
         ['O', 'X', 'X'],
     ]
+    const _boardContainer = document.querySelector('.board-container')
+    const marker = 'X'
+
+    function _placeMark(e, row, column) {
+        if (!e.target.innerText) {
+            _board[row][column] = marker
+            display()
+        }
+    }
+
+    function _clearBoardContainer() {
+        _boardContainer.innerHTML = ""
+    }
 
     function display() {
-        const boardContainer = document.querySelector('.board-container')
+        _clearBoardContainer()
 
-        _board.forEach(row => {
-            row.forEach((element) => {
+        _board.forEach((row, rowIndex) => {
+            row.forEach((element, columnIndex) => {
                 const field = document.createElement("div")
                 field.innerText = element
-                boardContainer.appendChild(field)
+                field.addEventListener('click', e => _placeMark(e, rowIndex, columnIndex))
+                _boardContainer.appendChild(field)
             })
         })
     }
@@ -21,5 +35,4 @@ const gameBoard = (function () {
         display
     }
 })()
-
 gameBoard.display()
