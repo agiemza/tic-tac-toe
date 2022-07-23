@@ -39,6 +39,7 @@
 .board-container div:hover {
     background-color: rgb(252, 252, 252);
 }
+
 .board-container div:active {
     background-color: rgb(237, 247, 246);
 }
