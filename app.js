@@ -49,6 +49,23 @@ const gameBoard = (function () {
         }
     }
 
+    function _drawDetector() {
+        let filledFields = 0
+
+        _board.forEach(row => {
+            row.forEach(cell => {
+                if (cell.length > 0) {
+                    filledFields++
+                }
+            })
+        })
+
+        while (filledFields === _board.length ** 2) {
+            console.log("draw")
+            break
+        }
+    }
+
     function _checkGameEnd() {
 
         // check rows
@@ -65,6 +82,7 @@ const gameBoard = (function () {
         _winDetector([0, 0], [1, 1], [2, 2])
         _winDetector([0, 2], [1, 1], [2, 0])
 
+        _drawDetector()
     }
 
     function _clearBoardContainer() {
