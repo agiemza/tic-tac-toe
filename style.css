@@ -43,3 +43,8 @@
 .board-container div:active {
     background-color: rgb(237, 247, 246);
 }
+
+.disabled {
+    pointer-events: none;
+    user-select: none;
+}

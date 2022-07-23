@@ -1,24 +1,40 @@
 const game = (function () {
-    let currentPlayer
+    let _currentPlayer
+    let _isGameOn
 
     function switchPlayer() {
-        if (currentPlayer === player1) {
-            currentPlayer = player2
+        if (_currentPlayer === player1) {
+            _currentPlayer = player2
             return
         }
-        if (currentPlayer === player2 || currentPlayer == null) {
-            currentPlayer = player1
+        if (_currentPlayer === player2 || _currentPlayer == null) {
+            _currentPlayer = player1
             return
         }
     }
 
     function getCurrentPlayer() {
-        return currentPlayer
+        return _currentPlayer
+    }
+
+    function isOn() {
+        return _isGameOn
+    }
+
+    function finish() {
+        _isGameOn = false
+    }
+
+    function start() {
+        _isGameOn = true
     }
 
     return {
         getCurrentPlayer,
         switchPlayer,
+        isOn,
+        start,
+        finish,
     }
 })()
 
@@ -33,19 +49,21 @@ const gameBoard = (function () {
     function _placeMark(e, row, column) {
         if (!_board[row][column]) {
             _board[row][column] = game.getCurrentPlayer().mark
-
-
-            game.switchPlayer()
-            display()
-            _checkGameEnd()
+            _endTurn()
         }
+    }
+
+    function _endTurn() {
+        game.switchPlayer()
+        display()
+        _checkGameEnd()
     }
 
     function _winDetector(field1, field2, field3) {
         if (!!_board[field1[0]][field1[1]]
             && _board[field1[0]][field1[1]] === _board[field2[0]][field2[1]]
             && _board[field1[0]][field1[1]] === _board[field3[0]][field3[1]]) {
-            console.log("win")
+            _finishGame('win')
         }
     }
 
@@ -61,9 +79,15 @@ const gameBoard = (function () {
         })
 
         while (filledFields === _board.length ** 2) {
-            console.log("draw")
+            _finishGame('draw')
             break
         }
+    }
+
+    function _finishGame(result) {
+        console.log(result)
+        game.finish()
+        _boardContainer.classList.add('disabled')
     }
 
     function _checkGameEnd() {
@@ -81,12 +105,12 @@ const gameBoard = (function () {
         //check diagonal
         _winDetector([0, 0], [1, 1], [2, 2])
         _winDetector([0, 2], [1, 1], [2, 0])
-
-        _drawDetector()
+        
+        game.isOn() && _drawDetector()
     }
 
     function _clearBoardContainer() {
-        _boardContainer.innerHTML = ""
+        _boardContainer.innerHTML = ''
     }
 
     function display() {
@@ -94,7 +118,7 @@ const gameBoard = (function () {
 
         _board.forEach((row, rowIndex) => {
             row.forEach((element, columnIndex) => {
-                const field = document.createElement("div")
+                const field = document.createElement('div')
                 field.innerText = element
                 field.addEventListener('click', e => _placeMark(e, rowIndex, columnIndex))
                 _boardContainer.appendChild(field)
@@ -115,9 +139,9 @@ const player = (name, mark) => {
 
 }
 
-const player1 = player("Joe", "X")
-const player2 = player("Donald", "O")
+const player1 = player('Joe', 'X')
+const player2 = player('Donald', 'O')
 
+game.start()
 game.switchPlayer()
-
 gameBoard.display()
