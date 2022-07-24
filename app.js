@@ -60,10 +60,12 @@ const gameBoard = (function () {
     }
 
     function _winDetector(field1, field2, field3) {
-        if (!!_board[field1[0]][field1[1]]
-            && _board[field1[0]][field1[1]] === _board[field2[0]][field2[1]]
-            && _board[field1[0]][field1[1]] === _board[field3[0]][field3[1]]) {
-            _finishGame('win')
+        const value1 = _board[field1[0]][field1[1]]
+        const value2 = _board[field2[0]][field2[1]]
+        const value3 = _board[field3[0]][field3[1]]
+
+        if (!!value1 && value1 === value2 && value1 === value3) {
+            _finishGame('win', value1)
         }
     }
 
@@ -84,9 +86,9 @@ const gameBoard = (function () {
         }
     }
 
-    function _finishGame(result) {
-        console.log(result)
+    function _finishGame(result, winnerMark) {
         game.finish()
+        displayController.showResult(result, winnerMark && winnerMark)
         _boardContainer.classList.add('disabled')
     }
 
@@ -105,7 +107,7 @@ const gameBoard = (function () {
         //check diagonal
         _winDetector([0, 0], [1, 1], [2, 2])
         _winDetector([0, 2], [1, 1], [2, 0])
-        
+
         game.isOn() && _drawDetector()
     }
 
@@ -128,6 +130,27 @@ const gameBoard = (function () {
 
     return {
         display,
+    }
+})()
+
+const displayController = (function () {
+    const _messageContainer = document.querySelector('.message-container')
+
+    function showResult(result, winnerMark) {
+        if (result === 'win') {
+
+            _messageContainer.innerText = `${winnerMark} WINS!`
+            _messageContainer.classList.add('win-message')
+        }
+
+        if (result === 'draw') {
+            _messageContainer.innerText = 'DRAW!'
+            _messageContainer.classList.add('draw-message')
+        }
+    }
+
+    return {
+        showResult,
     }
 })()
 
