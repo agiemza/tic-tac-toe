@@ -21,12 +21,20 @@ const game = (function () {
         return _isGameOn
     }
 
-    function finish() {
+    function finish(result, winnerMark) {
         _isGameOn = false
+        displayController.showResult(result, winnerMark && winnerMark)
     }
 
-    function start() {
+    function start(isNew) {
         _isGameOn = true
+        if (isNew === 'new') {
+            // reset score
+        }
+        switchPlayer()
+        displayController.hideResult()
+        gameBoard.clearMemory()
+        displayController.displayBoard()
     }
 
     return {
@@ -39,14 +47,21 @@ const game = (function () {
 })()
 
 const gameBoard = (function () {
-    const _board = [
-        ['', '', ''],
-        ['', '', ''],
-        ['', '', ''],
-    ]
-    const _boardContainer = document.querySelector('.board-container')
+    let _board
 
-    function _placeMark(e, row, column) {
+    function clearMemory() {
+        _board = [
+            ['', '', ''],
+            ['', '', ''],
+            ['', '', ''],
+        ]
+    }
+
+    function getMemory() {
+        return _board
+    }
+
+    function placeMark(e, row, column) {
         if (!_board[row][column]) {
             _board[row][column] = game.getCurrentPlayer().mark
             _endTurn()
@@ -55,7 +70,7 @@ const gameBoard = (function () {
 
     function _endTurn() {
         game.switchPlayer()
-        display()
+        displayController.displayBoard()
         _checkGameEnd()
     }
 
@@ -65,7 +80,7 @@ const gameBoard = (function () {
         const value3 = _board[field3[0]][field3[1]]
 
         if (!!value1 && value1 === value2 && value1 === value3) {
-            _finishGame('win', value1)
+            game.finish('win', value1)
         }
     }
 
@@ -81,19 +96,12 @@ const gameBoard = (function () {
         })
 
         while (filledFields === _board.length ** 2) {
-            _finishGame('draw')
+            game.finish('draw')
             break
         }
     }
 
-    function _finishGame(result, winnerMark) {
-        game.finish()
-        displayController.showResult(result, winnerMark && winnerMark)
-        _boardContainer.classList.add('disabled')
-    }
-
     function _checkGameEnd() {
-
         // check rows
         _winDetector([0, 0], [0, 1], [0, 2])
         _winDetector([1, 0], [1, 1], [1, 2])
@@ -111,34 +119,20 @@ const gameBoard = (function () {
         game.isOn() && _drawDetector()
     }
 
-    function _clearBoardContainer() {
-        _boardContainer.innerHTML = ''
-    }
-
-    function display() {
-        _clearBoardContainer()
-
-        _board.forEach((row, rowIndex) => {
-            row.forEach((element, columnIndex) => {
-                const field = document.createElement('div')
-                field.innerText = element
-                field.addEventListener('click', e => _placeMark(e, rowIndex, columnIndex))
-                _boardContainer.appendChild(field)
-            })
-        })
-    }
-
     return {
-        display,
+        clearMemory,
+        getMemory,
+        placeMark,
     }
 })()
 
 const displayController = (function () {
+    const _boardContainer = document.querySelector('.board-container')
+    const _messageWindow = document.querySelector('.message-window')
     const _messageContainer = document.querySelector('.message-container')
 
     function showResult(result, winnerMark) {
         if (result === 'win') {
-
             _messageContainer.innerText = `${winnerMark} WINS!`
             _messageContainer.classList.add('win-message')
         }
@@ -147,10 +141,40 @@ const displayController = (function () {
             _messageContainer.innerText = 'DRAW!'
             _messageContainer.classList.add('draw-message')
         }
+        _messageWindow.classList.add('window-shown')
+    }
+
+    function hideResult() {
+        _messageWindow.classList.remove('window-shown')
+    }
+
+    function _clearBoardContainer() {
+        _boardContainer.innerHTML = ''
+    }
+
+    function _addToBoardContainer(node) {
+        _boardContainer.appendChild(node)
+    }
+
+    function displayBoard() {
+        _clearBoardContainer()
+
+        const _board = gameBoard.getMemory()
+
+        _board.forEach((row, rowIndex) => {
+            row.forEach((element, columnIndex) => {
+                const field = document.createElement('div')
+                field.innerText = element
+                field.addEventListener('click', e => gameBoard.placeMark(e, rowIndex, columnIndex))
+                _addToBoardContainer(field)
+            })
+        })
     }
 
     return {
         showResult,
+        hideResult,
+        displayBoard,
     }
 })()
 
@@ -159,12 +183,15 @@ const player = (name, mark) => {
         name,
         mark,
     }
-
 }
 
 const player1 = player('Joe', 'X')
 const player2 = player('Donald', 'O')
 
-game.start()
-game.switchPlayer()
-gameBoard.display()
+game.start('new')
+
+const restartButton = document.querySelector(".restart")
+restartButton.addEventListener('click', () => game.start('new'))
+
+const nextRoundButton = document.querySelector(".next")
+nextRoundButton.addEventListener('click', () => game.start())
