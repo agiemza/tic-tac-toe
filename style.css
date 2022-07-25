@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Passion+One:wght@400;700;900&display=swap');
+
 * {
     margin: 0;
     padding: 0;
@@ -37,15 +39,30 @@ button:active {
     align-items: center;
 }
 
+header {
+    font-family: 'Passion One', sans-serif;
+    font-weight: 700;
+    color: white;
+    font-size: 55px;
+    text-shadow: 5px 5px 5px grey;
+    -webkit-text-stroke: 3px black;
+}
+
 .game {
     position: relative;
+}
+
+.game-info {
+    width: 302px;
+    margin: 25px;
+    box-shadow: 5px 5px 10px 0px grey;
 }
 
 .hidden {
     display: none !important;
 }
 
-/* Score */
+/* Player name */
 
 .player1-wrapper,
 .player2-wrapper {
@@ -54,8 +71,6 @@ button:active {
     grid-template-columns: auto 1fr;
     align-items: center;
 }
-
-/* Player name */
 
 .names-container {
     display: grid;
@@ -96,6 +111,14 @@ button:active {
     background-image: url(images/save_icon.svg);
 }
 
+/* Score */
+
+.player1-score,
+.player2-score {
+    font-size: 1.5rem;
+}
+
+
 /* Board */
 
 .board-container {
@@ -105,6 +128,7 @@ button:active {
     width: 302px;
     height: 302px;
     background-color: lightgrey;
+    box-shadow: 5px 5px 10px 0px grey;
 }
 
 .board-container div {
@@ -137,9 +161,6 @@ button:active {
 .message-window {
     position: absolute;
     display: grid;
-    grid-template-areas:
-        "message message"
-        "button1 button2";
     justify-content: center;
     justify-items: center;
     align-content: center;
@@ -148,7 +169,7 @@ button:active {
     right: 0;
     bottom: 0;
     left: 0;
-    background-color: rgba(0, 0, 0, 0.1);
+    background-color: rgba(0, 0, 0, 0.05);
     backdrop-filter: blur(2px);
     opacity: 0;
     transition: opacity 1s;
@@ -156,10 +177,9 @@ button:active {
 }
 
 .message-container {
-    grid-area: message;
     font-size: 2rem;
     font-weight: 700;
-    -webkit-text-stroke: 1px white;
+    -webkit-text-stroke: 1.5px white;
     text-transform: uppercase;
     text-align: center;
     word-break: break-word;
@@ -169,12 +189,10 @@ button:active {
     padding: 5px 10px;
 }
 
-.restart {
-    grid-area: button2;
-}
-
-.next {
-    grid-area: button1;
+.game-over-controlls {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: 1fr 1fr;
 }
 
 .window-shown {

@@ -26,23 +26,19 @@ const game = (function () {
         displayController.showResult(result)
     }
 
-    function start(isNew) {
-        if (isNew === 'new') {
+    function start(type) {
+        _isGameOn = true
+        gameBoard.clearMemory()
+        displayController.hideResult()
+        displayController.displayBoard()
+        formController.hideEditButtons()
+
+        if (type === 'restart') {
             score.reset()
             game.switchPlayer()
+            displayController.showStartScreen()
+            formController.showEditButtons()
         }
-        _isGameOn = true
-        displayController.hideResult()
-        gameBoard.clearMemory()
-        displayController.displayBoard()
-    }
-
-    function addPoint(player) {
-        player.score++
-    }
-
-    function addPoint(player) {
-        player.score++
     }
 
     return {
@@ -51,7 +47,6 @@ const game = (function () {
         isOn,
         start,
         finish,
-        addPoint,
     }
 })()
 
@@ -139,16 +134,35 @@ const displayController = (function () {
     const _boardContainer = document.querySelector('.board-container')
     const _messageWindow = document.querySelector('.message-window')
     const _messageContainer = document.querySelector('.message-container')
+    const _newGameControls = document.querySelector('.new-game-controlls')
+    const _gameOverControls = document.querySelector('.game-over-controlls')
 
-    function _clearBoardContainer() {
-        _boardContainer.innerHTML = ''
+    function setEventListeners() {
+        const restartButton = document.querySelector('.restart')
+        restartButton.addEventListener('click', () => game.start('restart'))
+
+        const nextRoundButton = document.querySelector('.next')
+        nextRoundButton.addEventListener('click', () => game.start())
+
+        const newGameButton = document.querySelector('.new-game')
+        newGameButton.addEventListener('click', () => game.start(''))
     }
 
-    function _addToBoardContainer(node) {
-        _boardContainer.appendChild(node)
+    function showStartScreen() {
+        _gameOverControls.classList.add('hidden')
+        _newGameControls.classList.remove('hidden')
+
+        _messageContainer.innerText = 'New game'
+        _messageContainer.classList.remove('draw-message')
+        _messageContainer.classList.add('win-message')
+
+        _messageWindow.classList.add('window-shown')
     }
 
     function showResult(result) {
+        _gameOverControls.classList.remove('hidden')
+        _newGameControls.classList.add('hidden')
+
         if (result === 'win') {
             score.addPoint()
             _messageContainer.innerText = `${game.getCurrentPlayer().name} wins!`
@@ -168,15 +182,6 @@ const displayController = (function () {
         _messageWindow.classList.remove('window-shown')
     }
 
-    function setEventListeners() {
-        const restartButton = document.querySelector('.restart')
-        restartButton.addEventListener('click', () => game.start('new'))
-
-        const nextRoundButton = document.querySelector('.next')
-        nextRoundButton.addEventListener('click', () => game.start())
-    }
-
-
     function displayBoard() {
         _clearBoardContainer()
 
@@ -192,30 +197,48 @@ const displayController = (function () {
         })
     }
 
+    function _clearBoardContainer() {
+        _boardContainer.innerHTML = ''
+    }
+
+    function _addToBoardContainer(node) {
+        _boardContainer.appendChild(node)
+    }
+
     return {
         showResult,
         hideResult,
         displayBoard,
         setEventListeners,
+        showStartScreen,
     }
 })()
 
 const formController = (function () {
     const _playerCard = document.querySelectorAll('.player-card')
     const _playerForm = document.querySelectorAll('.player-form')
+    const editPlayer1Button = document.querySelector('.edit-player1')
+    const editPlayer2Button = document.querySelector('.edit-player2')
 
     function setEventListeners() {
-        const editPlayer1Button = document.querySelector('.edit-player1')
-        editPlayer1Button.addEventListener('click', e => _handleForm(e, '1', "open"))
+        editPlayer1Button.addEventListener('click', e => _handleForm(e, '1', 'open'))
+        editPlayer2Button.addEventListener('click', e => _handleForm(e, '2', 'open'))
 
         const closePlayer1Button = document.querySelector('.close-player1')
-        closePlayer1Button.addEventListener('click', e => _handleForm(e, '1', "close"))
-
-        const editPlayer2Button = document.querySelector('.edit-player2')
-        editPlayer2Button.addEventListener('click', e => _handleForm(e, '2', "open"))
+        closePlayer1Button.addEventListener('click', e => _handleForm(e, '1', 'close'))
 
         const closePlayer2Button = document.querySelector('.close-player2')
-        closePlayer2Button.addEventListener('click', e => _handleForm(e, '2', "close"))
+        closePlayer2Button.addEventListener('click', e => _handleForm(e, '2', 'close'))
+    }
+
+    function showEditButtons() {
+        editPlayer1Button.classList.remove('hidden')
+        editPlayer2Button.classList.remove('hidden')
+    }
+
+    function hideEditButtons() {
+        editPlayer1Button.classList.add('hidden')
+        editPlayer2Button.classList.add('hidden')
     }
 
     function _handleForm(event, playerNumber, eventType) {
@@ -246,6 +269,8 @@ const formController = (function () {
 
     return {
         setEventListeners,
+        showEditButtons,
+        hideEditButtons,
     }
 })()
 
@@ -256,15 +281,16 @@ const score = (function () {
         player2.score = 0
         _update()
     }
+
     function addPoint() {
         game.getCurrentPlayer().score++
         _update()
     }
 
     function _update() {
-        const player1Score = document.querySelector(".player1-score")
+        const player1Score = document.querySelector('.player1-score')
         player1Score.innerText = player1.score
-        const player2Score = document.querySelector(".player2-score")
+        const player2Score = document.querySelector('.player2-score')
         player2Score.innerText = player2.score
     }
 
@@ -284,6 +310,6 @@ const player = (name, mark) => {
 const player1 = player('Player 1', 'X')
 const player2 = player('Player 2', 'O')
 
-game.start('new')
+game.start('restart')
 displayController.setEventListeners()
 formController.setEventListeners()
