@@ -241,6 +241,8 @@ const formController = (function () {
     }
 
     function hideEditButtons() {
+        _handleForm('', '1', 'close')
+        _handleForm('', '2', 'close')
         editPlayer1Button.classList.add('hidden')
         editPlayer2Button.classList.add('hidden')
     }
@@ -265,10 +267,14 @@ const formController = (function () {
     }
 
     function _handleForm(event, playerNumber, eventType) {
-        event.preventDefault()
+        event && event.preventDefault()
 
         const playerInput = document.querySelector(`#player${playerNumber}`)
         const player = playerNumber === '1' ? player1 : player2
+
+        if (playerInput.value.trim().length < 1) {
+            playerInput.value = `Player ${playerNumber}`
+        }
 
         if (eventType === 'close') {
             _changeName(player, playerInput.value, playerNumber)
