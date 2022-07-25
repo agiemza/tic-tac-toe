@@ -9,8 +9,25 @@
     --draw-message: rgb(217, 24, 24);
     --win-message: rgb(40, 174, 86);
     --main: rgb(60 245 226);
-    --hover: rgb(250, 250, 250);
-    --active: rgb(237, 247, 246);
+    --hover: rgb(237, 247, 246);
+    --active: rgb(250, 250, 250);
+}
+
+button {
+    cursor: pointer;
+    border-radius: 5px;
+    border: none;
+    color: rgb(50, 50, 50);
+    background-color: white;
+}
+
+button:hover {
+    background-color: var(--hover);
+}
+
+button:active {
+    transform: scale(0.95);
+    background-color: var(--active);
 }
 
 .root {
@@ -22,6 +39,51 @@
 
 .game {
     position: relative;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Player name */
+
+.names-container {
+    display: grid;
+    gap: 10px;
+    padding: 15px;
+}
+
+.player {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: 1fr 25px;
+    align-items: center;
+    font-size: 16px;
+}
+
+.player button {
+    width: 25px;
+    height: 25px;
+    background-size: 100%;
+}
+
+.player > div {
+    width: 180px;
+    padding: 0 5px;
+}
+
+.edit {
+    background-image: url(images/edit_icon.svg);
+}
+
+.player > input {
+    width: 180px;
+    font-size: 16px;
+    padding: 0 5px;
+}
+
+.save {
+    background-image: url(images/save_icon.svg);
 }
 
 /* Board */
@@ -61,6 +123,7 @@
 }
 
 /* Messages */
+
 .message-window {
     position: absolute;
     display: grid;
@@ -87,25 +150,13 @@
     font-size: 2rem;
     font-weight: 700;
     -webkit-text-stroke: 1px white;
+    text-transform: uppercase;
+    text-align: center;
+    word-break: break-word;
 }
 
 .message-window button {
-    cursor: pointer;
     padding: 5px 10px;
-    border: 1px solid var(--main);
-    border-radius: 5px;
-    color: rgb(50, 50, 50);
-    background-color: white;
-}
-
-.message-window button:hover {
-    transform: scale(0.98);
-    background-color: var(--hover);
-}
-
-.message-window button:active {
-    transform: scale(0.95);
-    background-color: var(--hover);
 }
 
 .restart {

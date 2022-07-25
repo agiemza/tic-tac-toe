@@ -21,9 +21,9 @@ const game = (function () {
         return _isGameOn
     }
 
-    function finish(result, winnerMark) {
+    function finish(result) {
         _isGameOn = false
-        displayController.showResult(result, winnerMark && winnerMark)
+        displayController.showResult(result)
     }
 
     function start(isNew) {
@@ -31,8 +31,8 @@ const game = (function () {
         if (isNew === 'new') {
             // reset score
         }
-        switchPlayer()
         displayController.hideResult()
+        switchPlayer()
         gameBoard.clearMemory()
         displayController.displayBoard()
     }
@@ -69,9 +69,9 @@ const gameBoard = (function () {
     }
 
     function _endTurn() {
-        game.switchPlayer()
-        displayController.displayBoard()
         _checkGameEnd()
+        displayController.displayBoard()
+        game.switchPlayer()
     }
 
     function _winDetector(field1, field2, field3) {
@@ -80,7 +80,7 @@ const gameBoard = (function () {
         const value3 = _board[field3[0]][field3[1]]
 
         if (!!value1 && value1 === value2 && value1 === value3) {
-            game.finish('win', value1)
+            game.finish('win')
         }
     }
 
@@ -131,9 +131,17 @@ const displayController = (function () {
     const _messageWindow = document.querySelector('.message-window')
     const _messageContainer = document.querySelector('.message-container')
 
-    function showResult(result, winnerMark) {
+    function _clearBoardContainer() {
+        _boardContainer.innerHTML = ''
+    }
+
+    function _addToBoardContainer(node) {
+        _boardContainer.appendChild(node)
+    }
+    
+    function showResult(result) {
         if (result === 'win') {
-            _messageContainer.innerText = `${winnerMark} WINS!`
+            _messageContainer.innerText = `${game.getCurrentPlayer().name} wins!`
             _messageContainer.classList.add('win-message')
         }
 
@@ -148,13 +156,14 @@ const displayController = (function () {
         _messageWindow.classList.remove('window-shown')
     }
 
-    function _clearBoardContainer() {
-        _boardContainer.innerHTML = ''
+    function setEventListeners() {
+        const restartButton = document.querySelector('.restart')
+        restartButton.addEventListener('click', () => game.start('new'))
+
+        const nextRoundButton = document.querySelector('.next')
+        nextRoundButton.addEventListener('click', () => game.start())
     }
 
-    function _addToBoardContainer(node) {
-        _boardContainer.appendChild(node)
-    }
 
     function displayBoard() {
         _clearBoardContainer()
@@ -175,6 +184,58 @@ const displayController = (function () {
         showResult,
         hideResult,
         displayBoard,
+        setEventListeners,
+    }
+})()
+
+const editFormController = (function () {
+    const _playerCard = document.querySelectorAll('.player-card')
+    const _playerForm = document.querySelectorAll('.player-form')
+    const _playerNameContainer = document.querySelectorAll('.player-name')
+
+    function setEventListeners() {
+        const editPlayer1Button = document.querySelector('.edit-player1')
+        editPlayer1Button.addEventListener('click', () => _openEditForm('1'))
+
+        const savePlayer1Button = document.querySelector('.save-player1')
+        savePlayer1Button.addEventListener('click', e => _closeEditForm(e, '1'))
+
+        const editPlayer2Button = document.querySelector('.edit-player2')
+        editPlayer2Button.addEventListener('click', () => _openEditForm('2'))
+
+        const savePlayer2Button = document.querySelector('.save-player2')
+        savePlayer2Button.addEventListener('click', e => _closeEditForm(e, '2'))
+    }
+
+    function _openEditForm(playerNumber) {
+        const _playerInput = document.querySelector(`#player${playerNumber}`)
+        const _player = playerNumber === "1" ? player1 : player2
+        _playerInput.value = _player.name
+
+        _playerCard[playerNumber - 1].classList.add("hidden")
+        _playerForm[playerNumber - 1].classList.remove("hidden")
+        _playerInput.focus()
+    }
+
+    function _closeEditForm(event, playerNumber) {
+        event.preventDefault()
+
+        const _playerInput = document.querySelector(`#player${playerNumber}`)
+        const _player = playerNumber === "1" ? player1 : player2
+
+        _changeName(_player, _playerInput.value, playerNumber)
+
+        _playerCard[playerNumber - 1].classList.remove("hidden")
+        _playerForm[playerNumber - 1].classList.add("hidden")
+    }
+
+    function _changeName(player, name, playerNumber) {
+        player.rename(name)
+        _playerNameContainer[playerNumber-1].innerText = name
+    }
+
+    return {
+        setEventListeners,
     }
 })()
 
@@ -182,16 +243,14 @@ const player = (name, mark) => {
     return {
         name,
         mark,
+        rename(newName) {
+            this.name = newName
+        }
     }
 }
-
-const player1 = player('Joe', 'X')
-const player2 = player('Donald', 'O')
+const player1 = player('Player 1', 'X')
+const player2 = player('Player 2', 'O')
 
 game.start('new')
-
-const restartButton = document.querySelector(".restart")
-restartButton.addEventListener('click', () => game.start('new'))
-
-const nextRoundButton = document.querySelector(".next")
-nextRoundButton.addEventListener('click', () => game.start())
+displayController.setEventListeners()
+editFormController.setEventListeners()
