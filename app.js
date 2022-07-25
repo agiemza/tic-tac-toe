@@ -29,10 +29,10 @@ const game = (function () {
     function start(isNew) {
         if (isNew === 'new') {
             score.reset()
+            game.switchPlayer()
         }
         _isGameOn = true
         displayController.hideResult()
-        switchPlayer()
         gameBoard.clearMemory()
         displayController.displayBoard()
     }
