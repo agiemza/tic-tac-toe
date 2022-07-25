@@ -67,7 +67,7 @@ button:active {
     background-size: 100%;
 }
 
-.player > div {
+.player>div {
     width: 180px;
     padding: 0 5px;
 }
@@ -76,13 +76,13 @@ button:active {
     background-image: url(images/edit_icon.svg);
 }
 
-.player > input {
+.player>input {
     width: 180px;
     font-size: 16px;
     padding: 0 5px;
 }
 
-.save {
+.close {
     background-image: url(images/save_icon.svg);
 }
 

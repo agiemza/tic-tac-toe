@@ -138,7 +138,7 @@ const displayController = (function () {
     function _addToBoardContainer(node) {
         _boardContainer.appendChild(node)
     }
-    
+
     function showResult(result) {
         if (result === 'win') {
             _messageContainer.innerText = `${game.getCurrentPlayer().name} wins!`
@@ -188,50 +188,48 @@ const displayController = (function () {
     }
 })()
 
-const editFormController = (function () {
+const formController = (function () {
     const _playerCard = document.querySelectorAll('.player-card')
     const _playerForm = document.querySelectorAll('.player-form')
-    const _playerNameContainer = document.querySelectorAll('.player-name')
 
     function setEventListeners() {
         const editPlayer1Button = document.querySelector('.edit-player1')
-        editPlayer1Button.addEventListener('click', () => _openEditForm('1'))
+        editPlayer1Button.addEventListener('click', e => _handleForm(e, '1', "open"))
 
-        const savePlayer1Button = document.querySelector('.save-player1')
-        savePlayer1Button.addEventListener('click', e => _closeEditForm(e, '1'))
+        const closePlayer1Button = document.querySelector('.close-player1')
+        closePlayer1Button.addEventListener('click', e => _handleForm(e, '1', "close"))
 
         const editPlayer2Button = document.querySelector('.edit-player2')
-        editPlayer2Button.addEventListener('click', () => _openEditForm('2'))
+        editPlayer2Button.addEventListener('click', e => _handleForm(e, '2', "open"))
 
-        const savePlayer2Button = document.querySelector('.save-player2')
-        savePlayer2Button.addEventListener('click', e => _closeEditForm(e, '2'))
+        const closePlayer2Button = document.querySelector('.close-player2')
+        closePlayer2Button.addEventListener('click', e => _handleForm(e, '2', "close"))
     }
 
-    function _openEditForm(playerNumber) {
-        const _playerInput = document.querySelector(`#player${playerNumber}`)
-        const _player = playerNumber === "1" ? player1 : player2
-        _playerInput.value = _player.name
-
-        _playerCard[playerNumber - 1].classList.add("hidden")
-        _playerForm[playerNumber - 1].classList.remove("hidden")
-        _playerInput.focus()
-    }
-
-    function _closeEditForm(event, playerNumber) {
+    function _handleForm(event, playerNumber, eventType) {
         event.preventDefault()
 
-        const _playerInput = document.querySelector(`#player${playerNumber}`)
-        const _player = playerNumber === "1" ? player1 : player2
+        const playerInput = document.querySelector(`#player${playerNumber}`)
+        const player = playerNumber === '1' ? player1 : player2
 
-        _changeName(_player, _playerInput.value, playerNumber)
+        if (eventType === 'close') {
+            _changeName(player, playerInput.value, playerNumber)
+            _playerCard[playerNumber - 1].classList.remove('hidden')
+            _playerForm[playerNumber - 1].classList.add('hidden')
+        }
 
-        _playerCard[playerNumber - 1].classList.remove("hidden")
-        _playerForm[playerNumber - 1].classList.add("hidden")
+        if (eventType === 'open') {
+            playerInput.value = player.name
+            _playerCard[playerNumber - 1].classList.add('hidden')
+            _playerForm[playerNumber - 1].classList.remove('hidden')
+            playerInput.focus()
+        }
     }
 
     function _changeName(player, name, playerNumber) {
+        const playerNameContainer = document.querySelectorAll('.player-name')[playerNumber - 1]
         player.rename(name)
-        _playerNameContainer[playerNumber-1].innerText = name
+        playerNameContainer.innerText = name
     }
 
     return {
@@ -253,4 +251,4 @@ const player2 = player('Player 2', 'O')
 
 game.start('new')
 displayController.setEventListeners()
-editFormController.setEventListeners()
+formController.setEventListeners()
