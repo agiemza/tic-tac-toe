@@ -72,6 +72,11 @@ header {
     align-items: center;
 }
 
+.highlight {
+    font-size: 20px;
+    font-weight: 800;
+}
+
 .names-container {
     display: grid;
     gap: 10px;

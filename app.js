@@ -5,10 +5,12 @@ const game = (function () {
     function switchPlayer() {
         if (_currentPlayer === player1) {
             _currentPlayer = player2
+            formController.highlightPlayer("player2")
             return
         }
         if (_currentPlayer === player2 || _currentPlayer == null) {
             _currentPlayer = player1
+            formController.highlightPlayer("player1")
             return
         }
     }
@@ -24,6 +26,7 @@ const game = (function () {
     function finish(result) {
         _isGameOn = false
         displayController.showResult(result)
+        formController.highlightPlayer()
     }
 
     function start(type) {
@@ -35,9 +38,10 @@ const game = (function () {
 
         if (type === 'restart') {
             score.reset()
-            game.switchPlayer()
             displayController.showStartScreen()
             formController.showEditButtons()
+        } else {
+            game.switchPlayer()
         }
     }
 
@@ -73,9 +77,9 @@ const gameBoard = (function () {
     }
 
     function _endTurn() {
+        game.switchPlayer()
         _checkGameEnd()
         displayController.displayBoard()
-        game.switchPlayer()
     }
 
     function _winDetector(field1, field2, field3) {
@@ -241,6 +245,25 @@ const formController = (function () {
         editPlayer2Button.classList.add('hidden')
     }
 
+    function highlightPlayer(player) {
+        const player1Wrapper = document.querySelector('.player1-wrapper')
+        const player2Wrapper = document.querySelector('.player2-wrapper')
+        switch (player) {
+            case "player1":
+                player1Wrapper.classList.add('highlight')
+                player2Wrapper.classList.remove('highlight')
+                break
+            case "player2":
+                player1Wrapper.classList.remove('highlight')
+                player2Wrapper.classList.add('highlight')
+                break
+            default:
+                player1Wrapper.classList.remove('highlight')
+                player2Wrapper.classList.remove('highlight')
+                break
+        }
+    }
+
     function _handleForm(event, playerNumber, eventType) {
         event.preventDefault()
 
@@ -271,6 +294,7 @@ const formController = (function () {
         setEventListeners,
         showEditButtons,
         hideEditButtons,
+        highlightPlayer,
     }
 })()
 
