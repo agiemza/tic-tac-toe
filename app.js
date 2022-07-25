@@ -27,14 +27,22 @@ const game = (function () {
     }
 
     function start(isNew) {
-        _isGameOn = true
         if (isNew === 'new') {
-            // reset score
+            score.reset()
         }
+        _isGameOn = true
         displayController.hideResult()
         switchPlayer()
         gameBoard.clearMemory()
         displayController.displayBoard()
+    }
+
+    function addPoint(player) {
+        player.score++
+    }
+
+    function addPoint(player) {
+        player.score++
     }
 
     return {
@@ -43,6 +51,7 @@ const game = (function () {
         isOn,
         start,
         finish,
+        addPoint,
     }
 })()
 
@@ -141,12 +150,15 @@ const displayController = (function () {
 
     function showResult(result) {
         if (result === 'win') {
+            score.addPoint()
             _messageContainer.innerText = `${game.getCurrentPlayer().name} wins!`
+            _messageContainer.classList.remove('draw-message')
             _messageContainer.classList.add('win-message')
         }
 
         if (result === 'draw') {
             _messageContainer.innerText = 'DRAW!'
+            _messageContainer.classList.remove('win-message')
             _messageContainer.classList.add('draw-message')
         }
         _messageWindow.classList.add('window-shown')
@@ -228,7 +240,7 @@ const formController = (function () {
 
     function _changeName(player, name, playerNumber) {
         const playerNameContainer = document.querySelectorAll('.player-name')[playerNumber - 1]
-        player.rename(name)
+        player.name = name
         playerNameContainer.innerText = name
     }
 
@@ -237,13 +249,36 @@ const formController = (function () {
     }
 })()
 
+const score = (function () {
+
+    function reset() {
+        player1.score = 0
+        player2.score = 0
+        _update()
+    }
+    function addPoint() {
+        game.getCurrentPlayer().score++
+        _update()
+    }
+
+    function _update() {
+        const player1Score = document.querySelector(".player1-score")
+        player1Score.innerText = player1.score
+        const player2Score = document.querySelector(".player2-score")
+        player2Score.innerText = player2.score
+    }
+
+    return {
+        reset,
+        addPoint,
+    }
+})()
+
 const player = (name, mark) => {
     return {
         name,
         mark,
-        rename(newName) {
-            this.name = newName
-        }
+        score: 0,
     }
 }
 const player1 = player('Player 1', 'X')

@@ -45,6 +45,16 @@ button:active {
     display: none !important;
 }
 
+/* Score */
+
+.player1-wrapper,
+.player2-wrapper {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+}
+
 /* Player name */
 
 .names-container {
