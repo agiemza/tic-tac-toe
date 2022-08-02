@@ -77,8 +77,8 @@ const gameBoard = (function () {
     }
 
     function _endTurn() {
-        game.switchPlayer()
         _checkGameEnd()
+        game.switchPlayer()
         displayController.displayBoard()
     }
 
